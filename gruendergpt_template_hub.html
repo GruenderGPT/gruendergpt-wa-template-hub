@@ -58,9 +58,40 @@ main{flex:1;padding:22px;overflow-y:auto;min-width:0;max-width:calc(100vw - 300p
 .sid-card .sc-copy.ok{background:var(--gn)}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bo);border-radius:4px}
 @media(max-width:860px){.lay{flex-direction:column}.sid{position:static;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--bo)}.fg{grid-template-columns:1fr}main{padding:14px;max-width:100%}}
+
+/* ── LOGIN GATE ── */
+#loginGate{position:fixed;inset:0;background:linear-gradient(135deg,#0d47a1 0%,#1a73e8 55%,#4285f4 100%);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--wh);border-radius:18px;padding:40px 36px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+.login-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--bl),var(--bd));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px;box-shadow:0 4px 16px rgba(26,115,232,.35)}
+.login-box h1{font-size:19px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.login-box .lsub{font-size:13px;color:var(--mt);margin-bottom:26px}
+.login-box input{width:100%;height:46px;border:1.5px solid var(--bo);border-radius:10px;padding:0 16px;font-size:15px;font-family:inherit;outline:none;transition:.2s;text-align:center;letter-spacing:.5px}
+.login-box input:focus{border-color:var(--bl);box-shadow:0 0 0 3px rgba(26,115,232,.15)}
+.login-box button{width:100%;height:46px;background:var(--bl);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px;font-family:inherit;transition:.15s}
+.login-box button:hover{background:var(--bd)}
+.login-err{color:var(--rd);font-size:12.5px;margin-top:10px;display:none;font-weight:500}
+.login-err.show{display:block}
+.login-foot{font-size:11px;color:var(--mt);margin-top:22px}
+#appRoot{display:none}
+
 </style>
 </head>
 <body>
+
+<!-- LOGIN GATE -->
+<div id="loginGate">
+  <div class="login-box">
+    <div class="login-logo">🚀</div>
+    <h1>GründerGPT</h1>
+    <div class="lsub">WhatsApp Template Hub – Zugang nur für Kundenberater</div>
+    <input type="password" id="pwInput" placeholder="Passwort eingeben" autocomplete="off" onkeydown="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">Anmelden</button>
+    <div class="login-err" id="pwErr">Falsches Passwort. Bitte erneut versuchen.</div>
+    <div class="login-foot">🔒 Interner Bereich · Nicht weitergeben</div>
+  </div>
+</div>
+
+<div id="appRoot">
 <header class="tb">
   <div class="logo">
     <div class="li">🚀</div>
@@ -152,6 +183,31 @@ main{flex:1;padding:22px;overflow-y:auto;min-width:0;max-width:calc(100vw - 300p
 <main id="mc"></main>
 </div>
 <script>
+// ── ZUGANGSSCHUTZ ──
+// Passwort hier ändern: einfach den Text zwischen den Anführungszeichen ersetzen
+const SITE_PASSWORD = "ggpt_templates";
+
+function checkPw(){
+  const val = document.getElementById('pwInput').value;
+  if(val === SITE_PASSWORD){
+    sessionStorage.setItem('gpt_auth','1');
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('appRoot').style.display='block';
+  } else {
+    document.getElementById('pwErr').classList.add('show');
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+// Bereits in dieser Browser-Sitzung eingeloggt? Dann Gate überspringen.
+if(sessionStorage.getItem('gpt_auth')==='1'){
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('loginGate').style.display='none';
+    document.getElementById('appRoot').style.display='block';
+  });
+}
+
 const VIEWS={
   erstkontakt:{i:"\ud83d\udc4b",l:"Erstkontakt & Erstansprache",d:"Lead hat den GZ-Check gemacht \u2013 erste WhatsApp je nach Situation.",t:[
     {id:"44",n:"01_t1_arbeitslos",cat:"Erstkontakt / Erstansprache",col:"#1a73e8",bc:"j",bl:"\u26a1 Jetzt",tx:`Hey {{1}}, hier ist Dustin von GründerGPT. 👋
@@ -3156,5 +3212,6 @@ function go(k) {
 
 goGuide();
 </script>
+</div>
 </body>
 </html>
